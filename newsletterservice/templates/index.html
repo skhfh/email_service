@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+  {% load static %}
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Рассылка</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
+    <script>
+      var newsletterFormUrl = "{% url 'index' %}";
+    </script>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1 class="text-center">Создать новую рассылку</h1>
+      <div style="display: flex; justify-content: center;">
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-toggle="modal"
+          data-target="#newsletterModal"
+        >Создать рассылку</button>
+      </div>
+
+      <div
+        class="modal fade"
+        id="newsletterModal"
+        tabindex="-1" role="dialog"
+        aria-labelledby="newsletterModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header" style="background-color: #FFDAB9;">
+              <h5 class="modal-title text-center" id="newsletterModalLabel">
+                Новая рассылка
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+
+              <form id="newsletterForm" method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                  <label for="id_subject">{{ form.subject.label }}:</label>
+                  {{ form.subject }}
+                </div>
+                <div class="form-group">
+                  <label for="id_content">{{ form.content.label }}:</label>
+                  {{ form.content }}
+                </div>
+                <div class="form-group">
+                  <label for="id_template">{{ form.template.label }}:</label>
+                  {{ form.template }}
+                </div>
+
+                <div class="form-group">
+                  <div class="clearfix">
+                    <label
+                      for="id_subscribers_list"
+                      class="pull-left"
+                      style="margin-top: 10px;"
+                    >{{ form.subscribers.label }}:</label>
+                    <button
+                      type="button"
+                      id="filterBirthday"
+                      class="btn btn-info btn-sm pull-right"
+                    >Подписчики с ДР в ближайший месяц</button>
+                  </div>
+                  <div id="subscribersList" class="checkbox-list">
+                    {% for subscriber in form.subscribers.field.queryset %}
+                      <div class="checkbox">
+                        <label for="subscriber_{{ subscriber.id }}">
+                          <input
+                            type="checkbox"
+                            id="subscriber_{{ subscriber.id }}"
+                            name="subscribers"
+                            value="{{ subscriber.id }}"
+                            class="subscriber-checkbox">
+                          {{ subscriber.birth_date|date:'d.m.Y' }} -
+                          {{ subscriber.email }}
+                        </label>
+                        <script>
+                          var subscriber{{ subscriber.id }} = {
+                              id: {{ subscriber.id }},
+                              birth_date: '{{ subscriber.birth_date|date:"Y-m-d" }}'
+                          };
+                        </script>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="id_send_later"
+                    >{{ form.send_later.label }}:</label>
+                  {{ form.send_later }}
+                </div>
+                <div class="text-center">
+                  <button
+                    id="sendLaterButton"
+                    type="submit"
+                    class="btn btn-primary"
+                    disabled
+                  >Отправить позже</button>
+                  <button
+                    id="sendButton"
+                    type="submit"
+                    class="btn btn-primary"
+                  >Отправить</button>
+                </div>
+              </form>
+
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-default"
+                data-dismiss="modal"
+              >Закрыть</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

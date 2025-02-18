@@ -1,0 +1,17 @@
+#subscribersList {
+    display: flex;
+    flex-direction: column;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.checkbox-list {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+body {
+    background-color: #FFEFD5;
+}
